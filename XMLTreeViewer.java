@@ -111,7 +111,8 @@ public class XMLTreeViewer extends DefaultHandler {
 
       ((DefaultTreeModel) xmlJTree.getModel()).reload();
 
-      expandAll(xmlJTree);
+      //Comment this out if you want the trees to be closed by default
+      //expandAll(xmlJTree);
 
    }
 
