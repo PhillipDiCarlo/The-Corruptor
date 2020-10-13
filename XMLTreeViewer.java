@@ -1,4 +1,5 @@
-// Java Packages //	 
+//Java Packages //
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,199 +16,145 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.*;
 
 // JTree model viewer //
-public class XMLTreeViewer extends DefaultHandler {
+public class XMLTreeViewer {
 
-   private JTree xmlJTree;
-   DefaultTreeModel treeModel;
-   int lineCounter;
+    private JTree xmlJTree;
+    DefaultTreeModel treeModel;
+    int lineCounter;
 
-   DefaultMutableTreeNode base = new DefaultMutableTreeNode("XML Viewer in Tree Structure");
-   static XMLTreeViewer treeViewer = null;
-   JTextField txtFile = null;
+    DefaultMutableTreeNode base = new DefaultMutableTreeNode("XML Viewer in Tree Structure");
+    static XMLTreeViewer treeViewer = null;
+    JTextField txtFile = null;
 
-   // Method to begin to using SAX Parser starting from base root branching out to child nodes //
-   @Override
-   public void startElement(String uri, String localName, String tagName, Attributes attr) throws SAXException {
 
-      DefaultMutableTreeNode current = new DefaultMutableTreeNode(tagName);
+    // Main Program Start //
+    public static void main(String[] args) {
 
-      base.add(current);
+        treeViewer = new XMLTreeViewer();
 
-      base = current;
+// treeViewer.xmlSetUp();
 
-      for (int i = 0; i < attr.getLength(); i++) {
+        treeViewer.createUI();
 
-         DefaultMutableTreeNode currentAtt = new DefaultMutableTreeNode(attr.getLocalName(i) + " = "
+    }
 
-               + attr.getValue(i));
+    // Parser takes in current XML file to parse //
+    public void xmlSetUp(File xmlFile) {
 
-         base.add(currentAtt);
-      }
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(xmlFile);
+            Node root = (Node) doc.getDocumentElement();
 
-   }
+            if (root != null) {
+                DefaultTreeModel dtModel = new DefaultTreeModel(builtTreeNode(root));
+                xmlJTree.setModel(dtModel);
+            }
 
-   // error handling for entity parsing if not caught
-   public void skippedEntity(String name) throws SAXException {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-      System.out.println("Skipped Entity: '" + name + "'");
-   }
+    }
 
-   // Initial view of Jtree model idle //
-   @Override
-   public void startDocument() throws SAXException {
+    private DefaultMutableTreeNode builtTreeNode(Node root) {
+        DefaultMutableTreeNode dmtNode;
 
-      super.startDocument();
-      base = new DefaultMutableTreeNode("XML Viewer");
+        dmtNode = new DefaultMutableTreeNode(root.getNodeName());
 
-      ((DefaultTreeModel) xmlJTree.getModel()).setRoot(base);
+        NamedNodeMap attrMap = root.getAttributes();
+        if (attrMap != null) {
+            for (int i = 0; i < attrMap.getLength(); i++) {
+                Node attribute = attrMap.item(i);
+                DefaultMutableTreeNode currentAtt = new DefaultMutableTreeNode(attribute.getNodeName() + " : "
+                        + attribute.getNodeValue());
+                dmtNode.add(currentAtt);
+            }
+        }
 
-   }
+        NodeList nodeList = root.getChildNodes();
+        for (int count = 0; count < nodeList.getLength(); count++) {
+            Node tempNode = nodeList.item(count);
 
-   // Adding Description to each subsequent child node //
-   public void characters(char[] ch, int start, int length) throws SAXException {
+            if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+                if (tempNode.hasChildNodes()) {
+                    dmtNode.add(builtTreeNode(tempNode));
+                }
+            } else if (tempNode.getNodeType() == Node.TEXT_NODE) {
+                String text = tempNode.getNodeValue();
+                if (text.trim().length() > 0) {
+                    dmtNode.add(new DefaultMutableTreeNode("Description : " + tempNode.getNodeValue()));
+                }
+            }
+        }
+        return dmtNode;
+    }
 
-      String s = new String(ch, start, length).trim();
+    // Jtree View component //
+    public void createUI() {
 
-      if (!s.equals("")) {
+        treeModel = new DefaultTreeModel(base);
+        xmlJTree = new JTree(treeModel);
 
-         DefaultMutableTreeNode current = new DefaultMutableTreeNode("Description : " + s);
+        JScrollPane scrollPane = new JScrollPane(xmlJTree);
+        JFrame windows = new JFrame();
 
-         base.add(current);
+        windows.setTitle("XML file JTree Viewer using SAX Parser");
 
-      }
+        JPanel pnl = new JPanel();
+        pnl.setLayout(null);
 
-   }
+        JLabel lbl = new JLabel("File :");
+        txtFile = new JTextField("Selected File Name Here");
 
-   // End of current child node branching stopping at parent //
-   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+        JButton btn = new JButton("Import File");
+        btn.addActionListener(new ActionListener() {
 
-      base = (DefaultMutableTreeNode) base.getParent();
+            // JFile Chooser is opened after JButton interaction //
+            @Override
+            public void actionPerformed(ActionEvent evt) {
 
-   }
+                JFileChooser fileopen = new JFileChooser();
+                FileFilter filter = new FileNameExtensionFilter("xml files", "xml");
 
-   // Main Program Start //
-   public static void main(String[] args) {
+                fileopen.addChoosableFileFilter(filter);
+                int ret = fileopen.showDialog(null, "Open file");
 
-      treeViewer = new XMLTreeViewer();
+                if (ret == JFileChooser.APPROVE_OPTION) {
 
-      // treeViewer.xmlSetUp();
+                    File file = fileopen.getSelectedFile();
+                    txtFile.setText(file.getPath() + File.separator + file.getName());
+                    xmlSetUp(file);
 
-      treeViewer.createUI();
-
-   }
-
-   // Ends current XML file parsing and reloads //
-   @Override
-   public void endDocument() throws SAXException {
-
-      // Refresh JTree
-
-      ((DefaultTreeModel) xmlJTree.getModel()).reload();
-
-      //Comment this out if you want the trees to be closed by default
-      //expandAll(xmlJTree);
-
-   }
-
-   // Expansion of Jtree structure levels //
-   public void expandAll(JTree tree) {
-
-      int row = 0;
-
-      while (row < tree.getRowCount()) {
-
-         tree.expandRow(row);
-
-         row++;
-      }
-
-   }
-
-   // Parser takes in current XML file to parse // 
-   public void xmlSetUp(File xmlFile) {
-
-      try {
-
-         SAXParserFactory fact = SAXParserFactory.newInstance();
-
-         SAXParser parser = fact.newSAXParser();
-
-         parser.parse(xmlFile, this);
-
-      } catch (Exception e) {
-
-      }
-
-   }
-
-   // Jtree View component //
-   public void createUI() {
-
-      treeModel = new DefaultTreeModel(base);
-      xmlJTree = new JTree(treeModel);
-
-      JScrollPane scrollPane = new JScrollPane(xmlJTree);
-      JFrame windows = new JFrame();
-
-      windows.setTitle("XML file JTree Viewer using SAX Parser");
-
-      JPanel pnl = new JPanel();
-      pnl.setLayout(null);
-
-      JLabel lbl = new JLabel("File :");
-      txtFile = new JTextField("Selected File Name Here");
-
-      JButton btn = new JButton("Import File");
-      btn.addActionListener(new ActionListener() {
-
-         // JFile Chooser is opened after JButton interaction //
-         @Override
-         public void actionPerformed(ActionEvent evt) {
-
-            JFileChooser fileopen = new JFileChooser();
-            FileFilter filter = new FileNameExtensionFilter("xml files", "xml");
-
-            fileopen.addChoosableFileFilter(filter);
-            int ret = fileopen.showDialog(null, "Open file");
-
-            if (ret == JFileChooser.APPROVE_OPTION) {
-
-               File file = fileopen.getSelectedFile();
-               txtFile.setText(file.getPath() + File.separator + file.getName());
-               xmlSetUp(file);
+                }
 
             }
 
-         }
+        });
 
-      });
+// Pane window size and interaction //
+        lbl.setBounds(0, 0, 100, 30);
+        txtFile.setBounds(110, 0, 250, 30);
 
-      // Pane window size and interaction //
-      lbl.setBounds(0, 0, 100, 30);
-      txtFile.setBounds(110, 0, 250, 30);
+        btn.setBounds(360, 0, 100, 30);
+        scrollPane.setBounds(0, 50, 500, 600);
 
-      btn.setBounds(360, 0, 100, 30);
-      scrollPane.setBounds(0, 50, 500, 600);
+        pnl.add(lbl);
+        pnl.add(txtFile);
 
-      pnl.add(lbl);
-      pnl.add(txtFile);
+        pnl.add(btn);
+        pnl.add(scrollPane);
 
-      pnl.add(btn);
-      pnl.add(scrollPane);
+        windows.add(pnl);
+        windows.setSize(500, 700);
 
-      windows.add(pnl);
-      windows.setSize(500, 700);
+        windows.setVisible(true);
+        windows.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-      windows.setVisible(true);
-      windows.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-	    }
-
-	}
+    }
