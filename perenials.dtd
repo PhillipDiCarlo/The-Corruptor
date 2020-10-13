@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!ELEMENT perennials (daylily)*>
+
+<!ELEMENT daylily (cultivar, award*, bloom, cost)+>
+<!ATTLIST daylily
+   status (in-stock | limited | sold-out) #REQUIRED>
+
+<!ELEMENT cultivar (#PCDATA)>
+
+<!ELEMENT award (name, year)>
+
+<!ELEMENT name (#PCDATA)>
+<!ATTLIST name
+   note CDATA #IMPLIED>
+<!ELEMENT year (#PCDATA)>
+
+<!ELEMENT bloom (#PCDATA)>
+<!ATTLIST bloom
+   code (E | EM | M | ML | L | E-L) #REQUIRED>
+
+<!ELEMENT cost (#PCDATA)>
+<!ATTLIST cost 
+   discount CDATA #IMPLIED>
+<!ATTLIST cost 
+   currency (US | UK | CAN) "US">   
