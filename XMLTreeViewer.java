@@ -20,6 +20,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.tree.TreeCellEditor;
+
 // JTree model viewer //
 public class XMLTreeViewer {
 
@@ -29,7 +32,8 @@ public class XMLTreeViewer {
 
     DefaultMutableTreeNode base = new DefaultMutableTreeNode("XML Viewer in Tree Structure");
     static XMLTreeViewer treeViewer = null;
-    JTextField txtFile = null;
+    JTextField txtFile = new JTextField(null);
+    
 
 
     // Main Program Start //
@@ -102,10 +106,14 @@ public class XMLTreeViewer {
         treeModel = new DefaultTreeModel(base);
         xmlJTree = new JTree(treeModel);
 
+        TreeCellEditor editor = new DefaultCellEditor(txtFile);
+        xmlJTree.setEditable(true);
+        xmlJTree.setCellEditor(editor);
+
         JScrollPane scrollPane = new JScrollPane(xmlJTree);
         JFrame windows = new JFrame();
 
-        windows.setTitle("XML file JTree Viewer using SAX Parser");
+        windows.setTitle("XML File Modifier");
 
         JPanel pnl = new JPanel();
         pnl.setLayout(null);
@@ -158,3 +166,5 @@ public class XMLTreeViewer {
         windows.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     }
+
+}
