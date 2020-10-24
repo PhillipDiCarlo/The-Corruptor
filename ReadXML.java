@@ -12,7 +12,7 @@ public class ReadXML{
 
     try {
 
-	File fXmlFile = new File("pets.xml");
+	File fXmlFile = new File("test.xml");
 	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 	Document doc = dBuilder.parse(fXmlFile);
@@ -23,7 +23,7 @@ public class ReadXML{
 
 	System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 
-	NodeList nList = doc.getElementsByTagName("PetInfo");
+	NodeList nList = doc.getElementsByTagName("test");
 
 	System.out.println("----------------------------");
 
@@ -37,9 +37,9 @@ public class ReadXML{
 
 			Element eElement = (Element) nNode;
 
-			System.out.println("Type : " + eElement.getElementsByTagName("Type").item(0).getTextContent());
-			System.out.println("Name : " + eElement.getElementsByTagName("Name").item(0).getTextContent());
-			System.out.println("Owner : " + eElement.getElementsByTagName("Owner").item(0).getTextContent());
+			System.out.println("Type : " + eElement.getElementsByTagName("type").item(0).getTextContent());
+			System.out.println("Name : " + eElement.getElementsByTagName("bounds").item(0).getTextContent());
+			System.out.println("Owner : " + eElement.getElementsByTagName("value").item(0).getTextContent());
 
 		}
 	}

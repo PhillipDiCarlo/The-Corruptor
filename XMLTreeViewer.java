@@ -56,10 +56,12 @@ public class XMLTreeViewer {
             Document doc = builder.parse(xmlFile);
             Node root = (Node) doc.getDocumentElement();
 
+
             if (root != null) {
                 DefaultTreeModel dtModel = new DefaultTreeModel(builtTreeNode(root));
                 xmlJTree.setModel(dtModel);
             }
+            //WriteXML test = new WriteXML( root, "WrittenTest.xml");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +95,7 @@ public class XMLTreeViewer {
             } else if (tempNode.getNodeType() == Node.TEXT_NODE) {
                 String text = tempNode.getNodeValue();
                 if (text.trim().length() > 0) {
-                    dmtNode.add(new DefaultMutableTreeNode("Description : " + tempNode.getNodeValue()));
+                    dmtNode.add(new DefaultMutableTreeNode(tempNode.getNodeValue()));
                 }
             }
         }
