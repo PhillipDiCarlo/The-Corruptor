@@ -61,6 +61,7 @@ public class XMLTreeViewer {
                 DefaultTreeModel dtModel = new DefaultTreeModel(builtTreeNode(root));
                 xmlJTree.setModel(dtModel);
             }
+            //WriteXML test = new WriteXML( root, "WrittenTest.xml");
 
         } catch (Exception e) {
             e.printStackTrace();

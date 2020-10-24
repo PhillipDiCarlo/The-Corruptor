@@ -59,7 +59,8 @@ public class WriteXML{
 					variant.appendChild(doc.createTextNode(eElement.getElementsByTagName("variant").item(0).getTextContent()));
 					event.appendChild(variant);
 
-					for(int i = 0; i < 2; i++){
+					//NEED A WAY TO FIND NUMBER OF CONSTRAINTS
+					for(int i = 0; i < eElement.getElementsByTagName("constraint").getLength(); i++){
 						Element constraint = doc.createElement("constraint");
 						event.appendChild(constraint);
 
