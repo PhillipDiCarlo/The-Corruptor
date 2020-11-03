@@ -34,17 +34,16 @@ public class WriteXML{
 	
 			// create root elements
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("Test");
+			Element rootElement = doc.createElement("test");
 			doc.appendChild(rootElement);
 	
-			String Variant;
-
 			NodeList nList = root.getChildNodes();
 
+			//loop to iterate through each child of root
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 
+				//set current node to nNode
 				Node nNode = nList.item(temp);
-	
 	
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 	
@@ -59,19 +58,24 @@ public class WriteXML{
 					variant.appendChild(doc.createTextNode(eElement.getElementsByTagName("variant").item(0).getTextContent()));
 					event.appendChild(variant);
 
-					//NEED A WAY TO FIND NUMBER OF CONSTRAINTS
+					//Find the number of constraints and loop that number of times
 					for(int i = 0; i < eElement.getElementsByTagName("constraint").getLength(); i++){
+
+						//create constraint folder
 						Element constraint = doc.createElement("constraint");
 						event.appendChild(constraint);
 
+						//add the type to constraint
 						Element type = doc.createElement("type");
 						type.appendChild(doc.createTextNode(eElement.getElementsByTagName("type").item(i).getTextContent()));
 						constraint.appendChild(type);
 
+						//add the bounds to constraint
 						Element bounds = doc.createElement("bounds");
 						bounds.appendChild(doc.createTextNode(eElement.getElementsByTagName("bounds").item(i).getTextContent()));
 						constraint.appendChild(bounds);
 
+						//add the value to constraint
 						Element value = doc.createElement("value");
 						value.appendChild(doc.createTextNode(eElement.getElementsByTagName("value").item(i).getTextContent()));
 						constraint.appendChild(value);
@@ -85,10 +89,7 @@ public class WriteXML{
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(filename));
-	
-			// Output to console for testing
-			// StreamResult result = new StreamResult(System.out);
-	
+
 			transformer.transform(source, result);
 	
 			System.out.println("File saved!");

@@ -1,5 +1,3 @@
-//Java Packages //
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -29,10 +27,13 @@ public class XMLTreeViewer {
     private JTree xmlJTree;
     DefaultTreeModel treeModel;
     int lineCounter;
+    Node root;
 
     DefaultMutableTreeNode base = new DefaultMutableTreeNode("XML Viewer in Tree Structure");
     static XMLTreeViewer treeViewer = null;
     JTextField txtFile = new JTextField(null);
+    JTextField saveName = new JTextField(null);
+
     
 
 
@@ -47,6 +48,10 @@ public class XMLTreeViewer {
 
     }
 
+    private void setRoot(Node root){
+        this.root = root;
+    }
+
     // Parser takes in current XML file to parse //
     public void xmlSetUp(File xmlFile) {
 
@@ -55,6 +60,7 @@ public class XMLTreeViewer {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(xmlFile);
             Node root = (Node) doc.getDocumentElement();
+            setRoot(root);
 
 
             if (root != null) {
@@ -124,6 +130,21 @@ public class XMLTreeViewer {
         txtFile = new JTextField("Selected File Name Here");
 
         JButton btn = new JButton("Import File");
+
+        saveName = new JTextField("New File Name Here");
+        JButton save = new JButton("Save");
+
+        save.addActionListener(new ActionListener() {
+
+            // WriteXML is called after JButton interaction //
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                String saveFileName = saveName.getText();
+                WriteXML saveFile = new WriteXML(root, saveFileName);
+            }
+
+        });
+
         btn.addActionListener(new ActionListener() {
 
             // JFile Chooser is opened after JButton interaction //
@@ -148,18 +169,27 @@ public class XMLTreeViewer {
 
         });
 
+
 // Pane window size and interaction //
         lbl.setBounds(0, 0, 100, 30);
         txtFile.setBounds(110, 0, 250, 30);
+        saveName.setBounds(475,0,250, 30);
 
         btn.setBounds(360, 0, 100, 30);
         scrollPane.setBounds(0, 50, 500, 600);
+        save.setBounds(700, 0, 100, 30);
+
 
         pnl.add(lbl);
         pnl.add(txtFile);
 
         pnl.add(btn);
         pnl.add(scrollPane);
+
+        pnl.add(saveName);
+        pnl.add(save);
+
+
 
         windows.add(pnl);
         windows.setSize(500, 700);
