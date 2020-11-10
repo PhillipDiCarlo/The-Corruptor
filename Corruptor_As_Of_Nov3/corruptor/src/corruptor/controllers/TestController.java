@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -40,6 +41,7 @@ public class TestController {
     public TestController() {
     }
 
+    //This is for Import Xml to Model
     public Tests ImportXmltoModel(File xmlFile,String testname) throws SAXException,
             IOException, ParserConfigurationException  {
         
@@ -61,7 +63,7 @@ public class TestController {
 
             Element eventnode =(Element) eventListnode.item(i);
             Events event=new Events();
-            event.setName("event-"+i+1);
+            event.setName("event-"+(i+1));
             
             //Get the Variant
             Node variantnode=eventnode.getElementsByTagName("variant").item(0);
@@ -73,7 +75,7 @@ public class TestController {
             //System.out.println("\nCurrent Element: " + variantnode.getTextContent());
             
             //Iterate by Contraints
-            NodeList constraintsListnode = doc.getElementsByTagName("constraint");
+            NodeList constraintsListnode = eventnode.getElementsByTagName("constraint");
             List<Constrains> constraintsList=new ArrayList();
             
             for (int j = 0; j < constraintsListnode.getLength(); j++) {
@@ -119,6 +121,7 @@ public class TestController {
         
     }
     
+    //Exporting Model to XMl
     public void ExportModeltoXml(Tests test,File file) throws SAXException,
             IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException  {
         
@@ -176,7 +179,7 @@ public class TestController {
          StreamResult result = new StreamResult(file);
          transformer.transform(source, result);
          
-         // Output to console for testing
+         // Output to the file
          StreamResult consoleResult = new StreamResult(System.out);
          transformer.transform(source, consoleResult);
         
@@ -186,7 +189,7 @@ public class TestController {
         
     }
     
-
+//Generate the Tree from Model
     public void GenerateTreeFromModel(JTree tree, Tests test){
       
         
@@ -230,6 +233,7 @@ public class TestController {
         
     }
     
+    //Expand all tree
     private void ExpandAllNodes (JTree tree,  int start, int rowcount){
         
         for (int i=start;i<rowcount;i++){
@@ -242,6 +246,7 @@ public class TestController {
         
     }
     
+    //Fill the Combobox Variant by Event
     public void FillVariantComboboxfromEvent(JComboBox combo, Events event ){
       
         combo.removeAllItems();
@@ -249,6 +254,7 @@ public class TestController {
         
     }
 
+    //Fill Constraint Combobox by Event
     public void FillConstraintsComboboxfromEvent(JComboBox combo, Events event ){
         
             combo.removeAllItems();
@@ -262,6 +268,7 @@ public class TestController {
         
     }
 
+    //Fill Bounds Combobox by Event
     public void FillBoundsandValueComboboxfromEvent(JComboBox combo,JComboBox combo2, Events event, String constraintname ){
         
             combo.removeAllItems();
@@ -393,14 +400,15 @@ public class TestController {
         
     }
  
-    
+    //Delete constraint by Event 
     public void DeleteBound(Events event,String constraintname){
         
             List<Constrains> constrainslist= event.getConstraintlist();
             
             for (Constrains constraint : constrainslist ){
                 if (constraint.getName().equals(constraintname)){
-                     constraint.setBound(null);
+                     constrainslist.remove(constraint);
+                     break;
                 }
                 
             }
@@ -517,6 +525,7 @@ public class TestController {
         return xmlname;
     }
     
+    //List the Bounds Values
     public void ListValues(JComboBox combo){
         combo.removeAllItems();
         combo.addItem(1.0);
@@ -539,6 +548,40 @@ public class TestController {
                 }
         }
         return null;
+    }
+    
+    //Move the tree upset
+    public void MoveUp(List<Events> eventlist, String eventname){
+       
+        int index=0;
+       for (Events event:eventlist){
+           index++;
+                if (event.getName().equals(eventname)){
+                    break;
+                }
+        }
+       
+       if (index>1){
+           Collections.swap(eventlist, index-1, index-2);
+       }
+        
+    }
+    
+    //Move the Tree Downset
+        public void MoveDown(List<Events> eventlist, String eventname){
+       
+        int index=0;
+       for (Events event:eventlist){
+           index++;
+                if (event.getName().equals(eventname)){
+                    break;
+                }
+        }
+       
+       if (index<eventlist.size()){
+           Collections.swap(eventlist, index-1, index);
+       }
+        
     }
     
 }
