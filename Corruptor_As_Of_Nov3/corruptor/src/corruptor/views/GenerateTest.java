@@ -10,7 +10,9 @@ import corruptor.models.Tests;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -52,6 +54,9 @@ public class GenerateTest extends javax.swing.JFrame {
         jTree1 = new javax.swing.JTree();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -107,33 +112,70 @@ public class GenerateTest extends javax.swing.JFrame {
             }
         });
 
+        jButton5.setText("Down");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("Up");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jButton7.setText("Edit");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton5))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(303, 303, 303)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(21, 21, 21))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton6)
+                            .addComponent(jButton5))
+                        .addGap(4, 4, 4)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
 
@@ -342,7 +384,7 @@ public class GenerateTest extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(245, Short.MAX_VALUE))
+                .addContainerGap(231, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -449,8 +491,10 @@ public class GenerateTest extends javax.swing.JFrame {
 
     private void ExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportButtonActionPerformed
         try {
-            FileDialog dialog = new FileDialog((Frame)null,"Select the xml to export");
+            
+            FileDialog dialog = new  FileDialog((Frame)null,"Select the xml to export");
             dialog.setMode(FileDialog.SAVE);
+            
             dialog.setVisible(true);
             File xmlfile=new File(dialog.getFile());
         
@@ -513,6 +557,80 @@ public class GenerateTest extends javax.swing.JFrame {
      
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // Rotate Event Up
+        if (jTree1.getLastSelectedPathComponent()==null) {
+         JOptionPane.showMessageDialog(this, "Please select the Event to move","Alert", JOptionPane.INFORMATION_MESSAGE);
+         return;
+     }  
+     String eventselectet =jTree1.getLastSelectedPathComponent().toString();
+     if (eventselectet.isEmpty()){
+         return ;
+     }
+     
+        
+     TestController   controller=new TestController();
+     controller.MoveUp(testruning.getEventlist(),eventselectet);
+     controller.GenerateTreeFromModel(jTree1,testruning);
+    if (testruning.getEventlist().size()>0){
+        controller.FillVariantComboboxfromEvent(variantcombo, testruning.getEventlist().get(0));
+        controller.FillConstraintsComboboxfromEvent(constraintcombo, testruning.getEventlist().get(0));
+    }
+        
+        
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+      // Rotate Event Down
+        if (jTree1.getLastSelectedPathComponent()==null) {
+         JOptionPane.showMessageDialog(this, "Please select the Event to move","Alert", JOptionPane.INFORMATION_MESSAGE);
+         return;
+     }  
+     String eventselectet =jTree1.getLastSelectedPathComponent().toString();
+     if (eventselectet.isEmpty()){
+         return ;
+     }
+     
+        
+     TestController   controller=new TestController();
+     controller.MoveDown(testruning.getEventlist(),eventselectet);
+     controller.GenerateTreeFromModel(jTree1,testruning);
+    if (testruning.getEventlist().size()>0){
+        controller.FillVariantComboboxfromEvent(variantcombo, testruning.getEventlist().get(0));
+        controller.FillConstraintsComboboxfromEvent(constraintcombo, testruning.getEventlist().get(0));
+    }
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+                //Edit new Constraints
+     if (jTree1.getLastSelectedPathComponent()==null) {
+         JOptionPane.showMessageDialog(this, "Please select the Event","Alert", JOptionPane.INFORMATION_MESSAGE);
+         return;
+     }  
+     String eventselectet =jTree1.getLastSelectedPathComponent().toString();
+     if (eventselectet.isEmpty()){
+         return ;
+     }
+     
+     TestController   controller=new TestController();
+     EventForm eventform= new EventForm(this, true);
+     eventform.testruning=testruning;
+     eventform.edit=true;
+     eventform.eventruning=controller.GetEventbyText(testruning, eventselectet);
+     eventform.FillEvent();
+     eventform.setVisible(true);
+     
+     testruning=eventform.testruning;
+     controller.GenerateTreeFromModel(jTree1,testruning);
+
+     
+    if (testruning.getEventlist().size()>0){
+        controller.FillVariantComboboxfromEvent(variantcombo, testruning.getEventlist().get(0));
+        controller.FillConstraintsComboboxfromEvent(constraintcombo, testruning.getEventlist().get(0));
+    }
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -558,6 +676,9 @@ public class GenerateTest extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
