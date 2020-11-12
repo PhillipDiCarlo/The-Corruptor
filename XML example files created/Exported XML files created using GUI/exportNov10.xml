@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<test>
+  <event>
+    <variant>EXIT_ON_REACQ</variant>
+  </event>
+  <event>
+    <variant>LINK_ERRORS</variant>
+    <constraint>
+      <type>time_until_intercept</type>
+      <bounds>CONSTRAINT_BOUND_LESSER</bounds>
+      <value>5.0</value>
+    </constraint>
+  </event>
+  <event>
+    <variant>ACQ_LINK_ERRORS</variant>
+    <constraint>
+      <type>acq_complete_flag</type>
+      <bounds>CONSTRAINT_BOUND_DISABLED</bounds>
+      <value>1.0</value>
+    </constraint>
+    <constraint>
+      <type>uplink_lost_inject_count</type>
+      <bounds>CONSTRAINT_BOUND_DISABLED</bounds>
+      <value>6.0</value>
+    </constraint>
+    <constraint>
+      <type>link_manifest</type>
+      <bounds>CONSTRAINT_BOUND_GREATER_OR_EQUAL</bounds>
+      <value>4.0</value>
+    </constraint>
+  </event>
+</test>
