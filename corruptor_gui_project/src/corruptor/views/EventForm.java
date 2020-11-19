@@ -8,11 +8,17 @@ package corruptor.views;
 import corruptor.controllers.TestController;
 import corruptor.models.BoundTypes;
 import corruptor.models.Constrains;
+import corruptor.models.CooldownTime;
+import corruptor.models.CorruptionType;
 import corruptor.models.Events;
+import corruptor.models.LinkErrorCount;
+import corruptor.models.LinkManifest;
+import corruptor.models.Step;
 import corruptor.models.Tests;
 import corruptor.models.Variants;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,8 +30,11 @@ public class EventForm extends javax.swing.JDialog {
     List<Variants> variantlist;
     List<BoundTypes> boundlist;
     List<Constrains> constraintlist;
+    List<CorruptionType> corruptiontypelist;
     Events eventruning;
     Boolean edit;
+    LinkManifest link;
+    
     /**
      * Creates new form EventForm
      */
@@ -35,23 +44,41 @@ public class EventForm extends javax.swing.JDialog {
         variantlist=new  ArrayList();
         boundlist=new  ArrayList();
         constraintlist=new  ArrayList();
+        corruptiontypelist= new ArrayList();
         TestController controller=new TestController();
         controller.ListVariant(variantcombo, variantlist);
         controller.ListBounds(boundcombo, boundlist);
-        controller.ListValues(valuecombo);
+       // controller.ListValues(valuecombo);
         controller.ListConstraint(constraintcombo, constraintlist);
+        stepcombo.removeAllItems();
+        corruptioncombo.removeAllItems();
+        link = null;
+        
         edit=false;
     }
     
     public void FillEvent(){
         
         variantcombo.getModel().setSelectedItem(eventruning.getVariant().getName());
+        
+        
         List<Constrains> lista= eventruning.getConstraintlist();
         
         for (Constrains constrain:lista){
                 Object[] row={constrain.getName(),constrain.getBound().getName(),constrain.getBound().getValue()};
                 ((DefaultTableModel) jTable1.getModel()).addRow(row);
         }
+        
+        
+        TestController controller=new TestController();
+        
+        if (eventruning!=null)
+        {
+            link=eventruning.getLinkmanigest();
+        }
+        
+        controller.FillStepsComboboxfromEvent(stepcombo, eventruning.getLinkmanigest());       
+        
         
         
     }
@@ -74,12 +101,28 @@ public class EventForm extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         boundcombo = new javax.swing.JComboBox<>();
-        valuecombo = new javax.swing.JComboBox<>();
         jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
+        valuecombo = new javax.swing.JTextField();
         constraintcombo = new javax.swing.JComboBox<>();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        stepcombo = new javax.swing.JComboBox<>();
+        jButton9 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        linkerrorcounttext = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        cooldowntimetext = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        corruptioncombo = new javax.swing.JComboBox<>();
+        jButton8 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -121,8 +164,6 @@ public class EventForm extends javax.swing.JDialog {
         jLabel7.setText("Bound Type");
 
         boundcombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        valuecombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton4.setText("Add");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -174,17 +215,16 @@ public class EventForm extends javax.swing.JDialog {
                             .addComponent(jLabel7)
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(36, 36, 36)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(boundcombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(valuecombo, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(valuecombo, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(boundcombo, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,14 +232,17 @@ public class EventForm extends javax.swing.JDialog {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(boundcombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(28, 28, 28)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(valuecombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(valuecombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton5))))
         );
 
         constraintcombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -214,13 +257,6 @@ public class EventForm extends javax.swing.JDialog {
             }
         });
 
-        jButton3.setText("Save");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -232,13 +268,9 @@ public class EventForm extends javax.swing.JDialog {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(constraintcombo, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(constraintcombo, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,9 +281,163 @@ public class EventForm extends javax.swing.JDialog {
                     .addComponent(constraintcombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(66, 66, 66))
+        );
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 21)); // NOI18N
+        jLabel1.setText("Linked Manifest:");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 21)); // NOI18N
+        jLabel2.setText("Step:");
+
+        stepcombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        stepcombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                stepcomboItemStateChanged(evt);
+            }
+        });
+
+        jButton9.setText("New Step");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 21)); // NOI18N
+        jLabel5.setText("Step Detail:");
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 21)); // NOI18N
+        jLabel8.setText("Link Error Count:");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 21)); // NOI18N
+        jLabel9.setText("CoolDownTime");
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 21)); // NOI18N
+        jLabel10.setText("CorruptionType");
+
+        corruptioncombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton8.setText("Add");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
+        jButton7.setText("Del");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "CorruptionType"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jTable2);
+
+        jButton3.setText("Save");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(corruptioncombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(linkerrorcounttext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cooldowntimetext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(2, 2, 2)
+                                .addComponent(stepcombo, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton9))
+                            .addComponent(jLabel1))
+                        .addGap(0, 9, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(236, 236, 236))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(stepcombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jButton9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(linkerrorcounttext, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cooldowntimetext, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(corruptioncombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton7)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(jButton3)
-                .addGap(10, 10, 10))
+                .addGap(65, 65, 65))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -262,15 +448,20 @@ public class EventForm extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         pack();
@@ -315,6 +506,51 @@ public class EventForm extends javax.swing.JDialog {
             i++;   
         }
      
+          if (stepcombo.getModel().getSize()>0){
+                    //Add Manifest, Steps and Corruptions if exist
+                     
+                    if (link==null){
+                        link=new LinkManifest();
+                        link.setName("LinkManifest");
+                    }
+                    
+                    Step  step=controller.GetStepByText(link, stepcombo.getSelectedItem().toString());
+                    //for (Step step:link.getSteplist()){                        
+                            CooldownTime cooldowntime=new CooldownTime();
+                            String valor=cooldowntimetext.getText();
+                            if (valor.equals("")){
+                                valor="0";
+                            }
+                            cooldowntime.setValue(Double.parseDouble(valor));
+                            step.setCooldowntime(cooldowntime);
+                            LinkErrorCount linkerrorcount=new LinkErrorCount();
+                            valor=linkerrorcounttext.getText();
+                            if (valor.equals("")){
+                                valor="0";
+                            }
+                            linkerrorcount.setValue(Double.parseDouble(valor));
+                            step.setLinkerrorcount(linkerrorcount);
+                //    }
+/*                    //Set list or Corruptions
+                    List<CorruptionType> corruptiontypelists= new ArrayList();
+                        i=0;  
+                        while (i<jTable2.getModel().getRowCount())
+                           {
+
+                               CorruptionType corruptiontype=new CorruptionType();
+                               corruptiontype.setName(jTable2.getModel().getValueAt(i, 0).toString());
+                               corruptiontype.setXmlname(controller.getCorrruptiontypetXML(this.corruptiontypelist, corruptiontype.getName()));
+                               corruptiontypelists.add(corruptiontype);
+                               i++;   
+                           }
+                        
+                        step.setCorruptiontypelist(corruptiontypelists);
+*/
+        
+         }
+     
+     
+     
      if (eventruning!=null){
          
          if (edit==true){
@@ -327,9 +563,16 @@ public class EventForm extends javax.swing.JDialog {
              
          }
          
+          eventruning.setLinkmanigest(link);
+           
+         
+         
      }else{
          event.setConstraintlist(listconstraints);
-        
+         event.setLinkmanigest(link);
+         
+      
+         
         testruning.getEventlist().add(event);
         
      }
@@ -349,7 +592,7 @@ public class EventForm extends javax.swing.JDialog {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
     //Add the constraints
-        Object[] row={constraintcombo.getSelectedItem(),boundcombo.getSelectedItem(),valuecombo.getSelectedItem()};
+        Object[] row={constraintcombo.getSelectedItem(),boundcombo.getSelectedItem(),Double.parseDouble(valuecombo.getText())};
         //Verify if constraint is inserted
         int i=0;  
          while (i<jTable1.getModel().getRowCount()){
@@ -369,6 +612,154 @@ public class EventForm extends javax.swing.JDialog {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
          ((DefaultTableModel) jTable1.getModel()).removeRow(jTable1.getSelectedRow());
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        TestController controller=new TestController();
+        Step step=controller.GetStepByText(link, stepcombo.getSelectedItem().toString());
+        controller.RemoveCorruptionTypeFromStep(step, jTable2.getModel().getValueAt(jTable2.getSelectedRow(), 0).toString());
+                 
+        ((DefaultTableModel) jTable2.getModel()).removeRow(jTable2.getSelectedRow());
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    //Add the Corruptions
+        Object[] row={corruptioncombo.getSelectedItem()};
+        //Verify if Corruption is inserted
+        int i=0;  
+         while (i<jTable2.getModel().getRowCount()){
+             if (jTable2.getModel().getValueAt(i, 0).toString().equals(corruptioncombo.getSelectedItem().toString()))
+             {
+                 //((DefaultTableModel) jTable2.getModel()).removeRow(i);
+                 return;
+             }
+             
+            i++;   
+        }
+
+        TestController controller=new TestController();
+        Step step=controller.GetStepByText(link, stepcombo.getSelectedItem().toString());
+        List<CorruptionType> listcorruption=step.getCorruptiontypelist();
+        if (listcorruption==null){
+            listcorruption=new ArrayList();
+            CorruptionType corruption=new CorruptionType();
+            corruption.setName(corruptioncombo.getSelectedItem().toString());
+            corruption.setXmlname(controller.getCorrruptiontypetXML(corruptiontypelist , corruptioncombo.getSelectedItem().toString()));
+            listcorruption.add(corruption );            
+            step.setCorruptiontypelist(listcorruption);
+        }else
+        {
+            CorruptionType corruption=new CorruptionType();
+            corruption.setName(corruptioncombo.getSelectedItem().toString());
+            corruption.setXmlname(controller.getCorrruptiontypetXML(corruptiontypelist , corruptioncombo.getSelectedItem().toString()));
+            listcorruption.add(corruption);  
+        }
+        ((DefaultTableModel) jTable2.getModel()).addRow(row);
+
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+        TestController controller=new TestController();
+        if (!controller.GetVariantCanLinkManifest(variantcombo.getSelectedItem().toString())){
+             JOptionPane.showMessageDialog(this, "The Variant doesn't implement LinkManifest's","Alert", JOptionPane.INFORMATION_MESSAGE);
+             return;
+        }
+       
+         
+        if (eventruning!=null)
+         link=eventruning.getLinkmanigest();
+        
+        
+        if (link==null){
+            link=new LinkManifest();
+            link.setName("LinkManifest");
+  
+            if (eventruning!=null)    
+                 eventruning.setLinkmanigest(link);
+        }
+        
+        List<Step> steplist= link.getSteplist();        
+        Step step=new Step();
+            
+        if (steplist==null){
+            steplist=new ArrayList();
+            step=new Step();
+            step.setName("Step-1");
+            steplist.add(step);                
+        }else{
+            //Edit the laststep with the values:
+             Step  stepedit=controller.GetStepByText(link, stepcombo.getSelectedItem().toString());                  
+            CooldownTime cooldowntime=new CooldownTime();
+            String valor=cooldowntimetext.getText();
+            if (valor.equals("")){
+                valor="0";
+            }
+            cooldowntime.setValue(Double.parseDouble(valor));
+            stepedit.setCooldowntime(cooldowntime);
+            LinkErrorCount linkerrorcount=new LinkErrorCount();
+            valor=linkerrorcounttext.getText();
+            if (valor.equals("")){
+                valor="0";
+            }
+            linkerrorcount.setValue(Double.parseDouble(valor));
+            stepedit.setLinkerrorcount(linkerrorcount);
+
+            step=new Step();
+            step.setName("Step-"+(steplist.size()+1));
+            
+            steplist.add(step);
+        }
+        
+        
+        link.setSteplist(steplist);
+        
+        
+        controller.FillStepsComboboxfromEvent(stepcombo, link);       
+        stepcombo.getModel().setSelectedItem(step.getName());
+        
+
+        
+        
+        
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void stepcomboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_stepcomboItemStateChanged
+        // TODO add your handling code here:
+       if (stepcombo.getItemCount()>0) {           
+           TestController controller =new TestController();
+           
+           controller.ListCorruptionType(corruptioncombo);
+           
+           if (link!=null){
+               if (link.getSteplist()==null)
+                    {
+                        return;
+                    }
+           }
+           
+           Step stepselected=controller.GetStepByText(link, stepcombo.getSelectedItem().toString());
+           if (stepselected.getLinkerrorcount()!=null)
+           linkerrorcounttext.setText(stepselected.getLinkerrorcount().getValue().toString());
+           if (stepselected.getCooldowntime()!=null)
+           cooldowntimetext.setText(stepselected.getCooldowntime().getValue().toString());
+           
+           
+           List<CorruptionType> lista= stepselected.getCorruptiontypelist();
+           int i=0;  
+            while (i!=jTable2.getModel().getRowCount()){
+                    ((DefaultTableModel) jTable2.getModel()).removeRow(i);
+               //i++;   
+           }
+   
+            if (lista!=null){
+                for (CorruptionType corruptionType:lista){
+                     Object[] row={corruptionType.getName()};
+                     ((DefaultTableModel) jTable2.getModel()).addRow(row);
+                }
+            }
+                
+        }
+    }//GEN-LAST:event_stepcomboItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -415,19 +806,35 @@ public class EventForm extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> boundcombo;
     private javax.swing.JComboBox<String> constraintcombo;
+    private javax.swing.JTextField cooldowntimetext;
+    private javax.swing.JComboBox<String> corruptioncombo;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JComboBox<String> valuecombo;
+    private javax.swing.JTable jTable2;
+    private javax.swing.JTextField linkerrorcounttext;
+    private javax.swing.JComboBox<String> stepcombo;
+    private javax.swing.JTextField valuecombo;
     private javax.swing.JComboBox<String> variantcombo;
     // End of variables declaration//GEN-END:variables
 }
