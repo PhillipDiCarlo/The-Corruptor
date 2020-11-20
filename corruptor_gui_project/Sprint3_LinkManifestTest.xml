@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<test>
+  <event>
+    <variant>LINK_ERRORS</variant>
+    <constraint>
+      <type>link_event_done</type>
+      <bounds>CONSTRAINT_BOUND_GREATER_OR_EQUAL</bounds>
+      <value>1.0</value>
+    </constraint>
+    <link_manifest>
+      <step>
+        <link_error_count>5.0</link_error_count>
+        <cooldown_time>1.0</cooldown_time>
+        <corruption_type>UL_GID_ERROR</corruption_type>
+      </step>
+      <step>
+        <link_error_count>2.0</link_error_count>
+        <cooldown_time>0.0</cooldown_time>
+        <corruption_type>UL_T2_ERROR</corruption_type>
+        <corruption_type>UL_T3_ERROR</corruption_type>
+        <corruption_type>UL_T4_ERROR</corruption_type>
+      </step>
+      <step>
+        <link_error_count>3.0</link_error_count>
+        <cooldown_time>1.0</cooldown_time>
+        <corruption_type>DL_ERROR</corruption_type>
+      </step>
+      <step>
+        <link_error_count>50.0</link_error_count>
+        <cooldown_time>10.0</cooldown_time>
+        <corruption_type>SET_FORCED</corruption_type>
+        <corruption_type>UL_T3_ERROR</corruption_type>
+        <corruption_type>UL_ERROR</corruption_type>
+        <corruption_type>UL_XMIT_ERROR</corruption_type>
+      </step>
+    </link_manifest>
+  </event>
+  <event>
+    <variant>NO_ERRORS</variant>
+    <constraint>
+      <type>acq_complete_flag</type>
+      <bounds>CONSTRAINT_BOUND_GREATER_OR_EQUAL</bounds>
+      <value>1.0</value>
+    </constraint>
+  </event>
+</test>

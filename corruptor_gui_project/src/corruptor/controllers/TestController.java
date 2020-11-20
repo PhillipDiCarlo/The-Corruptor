@@ -7,7 +7,12 @@ package corruptor.controllers;
 
 import corruptor.models.BoundTypes;
 import corruptor.models.Constrains;
+import corruptor.models.CooldownTime;
+import corruptor.models.CorruptionType;
 import corruptor.models.Events;
+import corruptor.models.LinkErrorCount;
+import corruptor.models.LinkManifest;
+import corruptor.models.Step;
 import corruptor.models.Tests;
 import corruptor.models.Variants;
 import java.io.File;
@@ -24,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.ParserConfigurationException;
@@ -110,7 +116,58 @@ public class TestController {
             
             }
             event.setConstraintlist(constraintsList);
-          
+            
+            //iterate by LinkManifest
+             NodeList linkmanifestListnode = eventnode.getElementsByTagName("link_manifest");
+             LinkManifest linkmanifest=new LinkManifest();
+            
+            for (int j = 0; j < linkmanifestListnode.getLength(); j++) {
+                    
+                
+                
+                //Iterate by Steps
+                 NodeList stepsListnode = eventnode.getElementsByTagName("step");
+                 List<Step> stepList=new ArrayList();
+                  for (int y = 0; y < stepsListnode.getLength(); y++) {
+
+                      Element stepnode =(Element) stepsListnode.item(y);
+                      Step step=new Step();
+                      step.setName("step-"+(y+1));
+                       //Get the linkerrorcount
+                       Node linkerrorcountnode=stepnode.getElementsByTagName("link_error_count").item(0);
+                       LinkErrorCount linkErrorCount=new LinkErrorCount();
+                       linkErrorCount.setValue(Double.parseDouble(linkerrorcountnode.getTextContent()));
+                       step.setLinkerrorcount(linkErrorCount);
+                       
+                       //Get the cooldowntime
+                       Node cooldowntimenode=stepnode.getElementsByTagName("cooldown_time").item(0);
+                       CooldownTime cooldownTime=new CooldownTime();
+                       cooldownTime.setValue(Double.parseDouble(cooldowntimenode.getTextContent()));
+                       step.setCooldowntime(cooldownTime);
+                       
+                       //Iterate by CorruptionTypes
+                        NodeList corruptiontypesListnode = stepnode.getElementsByTagName("corruption_type");
+                        List<CorruptionType> corruptiontypeList=new ArrayList();
+                        for (int m = 0; m < corruptiontypesListnode.getLength(); m++) {
+                            Element corruptiontypenode =(Element) corruptiontypesListnode.item(m);
+                            CorruptionType corruptionType=new CorruptionType();
+                            //GetCorruptionType
+                             corruptionType.setXmlname(corruptiontypenode.getTextContent());
+                             corruptionType.setName(GetCorruptionTypeName( corruptiontypenode.getTextContent()));
+                             corruptiontypeList.add(corruptionType);
+                        }
+
+                       step.setCorruptiontypelist(corruptiontypeList);
+                       stepList.add(step);
+                  }
+                  linkmanifest.setSteplist(stepList);
+                  linkmanifest.setName("LinkManifest");                            
+                  event.setLinkmanigest(linkmanifest);
+            
+            }
+            
+            
+            
             
             eventlist.add(event);
         }
@@ -166,6 +223,40 @@ public class TestController {
                  eventnode.appendChild(constraintnode);
                  
            }
+           
+              //LinkedManifest                   
+              LinkManifest linkManifest = event.getLinkmanigest();
+              
+              if (linkManifest!=null){
+                  
+                        Element linkmanifestnode= doc.createElement("link_manifest");
+                        List<Step> stepList=linkManifest.getSteplist();
+                        for(Step step :stepList){
+                        Element stepnode= doc.createElement("step");
+                        
+                        Element linkerrorcountnode= doc.createElement("link_error_count");
+                        linkerrorcountnode.appendChild(doc.createTextNode(step.getLinkerrorcount().getValue().toString()));
+                        Element cooldowntimenode= doc.createElement("cooldown_time");
+                        cooldowntimenode.appendChild(doc.createTextNode(step.getCooldowntime().getValue().toString()));
+                        stepnode.appendChild(linkerrorcountnode);
+                        stepnode.appendChild(cooldowntimenode);
+                        
+                        //Iterate CorruptionType
+                        List<CorruptionType> corruptionTypeList=step.getCorruptiontypelist();
+                        for(CorruptionType corruptionType:corruptionTypeList){
+                                Element corruptiontypenode= doc.createElement("corruption_type");
+                                corruptiontypenode.appendChild(doc.createTextNode(corruptionType.getXmlname()));
+                                stepnode.appendChild(corruptiontypenode);
+                        }
+                        
+
+                        linkmanifestnode.appendChild(stepnode);
+                  }
+                        
+                   eventnode.appendChild(linkmanifestnode);
+              }
+              
+
                   
            root.appendChild(eventnode);
         }
@@ -215,11 +306,53 @@ public class TestController {
                  if (bound!=null)
                  {
                  DefaultMutableTreeNode boundnode = new DefaultMutableTreeNode(bound.getName());
+                DefaultMutableTreeNode boundvalue = new DefaultMutableTreeNode(bound.getValue().toString());
+                boundnode.add(boundvalue);
                  constraintnode.add(boundnode);
                  }
                  eventnode.add(constraintnode);
                  
            }
+           
+           
+                         //LinkedManifest                   
+              LinkManifest linkManifest = event.getLinkmanigest();
+              
+              if (linkManifest!=null){
+                  
+                        DefaultMutableTreeNode linkmanifestnode = new DefaultMutableTreeNode(linkManifest.getName());
+                        
+                        List<Step> stepList=linkManifest.getSteplist();
+                        for(Step step :stepList){
+                        DefaultMutableTreeNode stepnode = new DefaultMutableTreeNode(step.getName());
+                        
+                        DefaultMutableTreeNode linkerrorcountnode = new DefaultMutableTreeNode("LinkErrorCount");
+                        DefaultMutableTreeNode linkerrorcountnodevalue = new DefaultMutableTreeNode(step.getLinkerrorcount().getValue().toString());
+                        linkerrorcountnode.add(linkerrorcountnodevalue);
+                        stepnode.add(linkerrorcountnode);
+                        
+                        DefaultMutableTreeNode cooldowntimenode = new DefaultMutableTreeNode("CoolDownTime");
+                        DefaultMutableTreeNode cooldowntimenodevalue = new DefaultMutableTreeNode(step.getCooldowntime().getValue().toString());
+                        cooldowntimenode.add(cooldowntimenodevalue);
+                        stepnode.add(cooldowntimenode);
+                        
+                        //Iterate CorruptionType
+                        List<CorruptionType> corruptionTypeList=step.getCorruptiontypelist();
+                        for(CorruptionType corruptionType:corruptionTypeList){
+                                DefaultMutableTreeNode corruptiontypenode = new DefaultMutableTreeNode("corruption_type");
+                                DefaultMutableTreeNode corruptiontypenodename = new DefaultMutableTreeNode(corruptionType.getName());
+                                corruptiontypenode.add(corruptiontypenodename);
+                                stepnode.add(corruptiontypenode);
+                        }
+                        
+
+                        linkmanifestnode.add(stepnode);
+                  }
+                        
+                   eventnode.add(linkmanifestnode);
+              }
+           
+           
                    
             root.add(eventnode);
         }
@@ -269,17 +402,17 @@ public class TestController {
     }
 
     //Fill Bounds Combobox by Event
-    public void FillBoundsandValueComboboxfromEvent(JComboBox combo,JComboBox combo2, Events event, String constraintname ){
+    public void FillBoundsandValueComboboxfromEvent(JComboBox combo,JTextField combo2, Events event, String constraintname ){
         
             combo.removeAllItems();
-            combo2.removeAllItems();
+            combo2.setText("");
             List<Constrains> constrainslist= event.getConstraintlist();
             
             for (Constrains constraint : constrainslist ){
                 if (constraint.getName().equals(constraintname)){
                      if (constraint.getBound()!=null){
                             combo.addItem(constraint.getBound().getName());
-                            combo2.addItem(constraint.getBound().getValue());
+                            combo2.setText(constraint.getBound().getValue().toString());
                      }
                     
                 }
@@ -290,6 +423,7 @@ public class TestController {
         
     }
     
+    //Get constraint xmlname and convert it to GUI constraint name
     public String GetConstraintName(String xmlname){
         String name="";
         switch ( xmlname.trim()) {
@@ -343,7 +477,7 @@ public class TestController {
     }
     
     
-    
+    //Get variant xmlname and convert it to GUI variant name
     public String GetVariantName(String xmlname){
         String name="";
         switch ( xmlname.trim()) {
@@ -400,24 +534,26 @@ public class TestController {
         
     }
  
-    //Delete constraint by Event 
+    //Delete Bound by Event and Constrain
     public void DeleteBound(Events event,String constraintname){
         
             List<Constrains> constrainslist= event.getConstraintlist();
+            Constrains cons=null;
             
             for (Constrains constraint : constrainslist ){
                 if (constraint.getName().equals(constraintname)){
-                     constrainslist.remove(constraint);
-                     break;
+                     constraint.setBound(null);
+                     cons=constraint;
                 }
                 
             }
 
+            constrainslist.remove(cons);
     }
 
 
     
-    
+    //Removes selected eventname string from a given eventlist of a test
     public void DeleteEvent(Tests test ,String eventname){
         
         List<Events> eventlist = test.getEventlist();
@@ -434,8 +570,9 @@ public class TestController {
             
     }
     
+    //Add all the Variant to the list
     public void ListVariant(JComboBox combo, List<Variants> variantlist){
-        //Add all the Variant to the list
+        
         
         combo.removeAllItems();
         variantlist.add(new Variants("Acquisition Link Errors","ACQ_LINK_ERRORS"));
@@ -460,8 +597,9 @@ public class TestController {
         
     }
     
+    //Add all the constraint to the list
     public void ListConstraint(JComboBox combo,List<Constrains> constraintlist){
-           //Add all the constraint to the list
+           
         
         combo.removeAllItems();
         constraintlist.add(new Constrains("Acq Complete","acq_complete_flag"));
@@ -486,8 +624,9 @@ public class TestController {
         
     }
     
+    //Add all the Bounds to the list
     public void ListBounds(JComboBox combo, List<BoundTypes> boundlist){
-           //Add all the Bounds to the list
+           
         
         combo.removeAllItems();
         boundlist.add(new BoundTypes("CONSTRAINT_BOUND_DISABLED"));
@@ -503,6 +642,7 @@ public class TestController {
         
     }
     
+    //Get variantname(xml) by string
     public String getVariantXML(List<Variants> listavariants, String variantname){
         String xmlname="";
         for(Variants variant:listavariants){
@@ -514,6 +654,7 @@ public class TestController {
         return xmlname;
     }
 
+    //Get constraintname(xml) by string
     public String getConstraintXML(List<Constrains> listaconstraints, String constraintname){
         String xmlname="";
         for(Constrains constraint:listaconstraints){
@@ -539,6 +680,7 @@ public class TestController {
         combo.addItem(9.0);
     }
     
+    //Get event by event name
     public Events GetEventbyText(Tests test, String eventname){
         
         List<Events> eventlist=test.getEventlist();
@@ -550,7 +692,7 @@ public class TestController {
         return null;
     }
     
-    //Move the tree upset
+    //Move the Tree Upset
     public void MoveUp(List<Events> eventlist, String eventname){
        
         int index=0;
@@ -581,6 +723,185 @@ public class TestController {
        if (index<eventlist.size()){
            Collections.swap(eventlist, index-1, index);
        }
+        
+    }
+        
+        //Get the corruption type name by a xmlname
+         public String GetCorruptionTypeName(String xmlname){
+        String name="";
+        switch ( xmlname.trim()) {
+            case "UL_XMIT_ERROR":
+            name="Uplink Xmit Error";
+            break;
+            case "UL_GID_ERROR":
+            name="Uplink GID Error";
+            break;
+            case "UL_T2_ERROR":
+            name="Uplink T2 Error";
+            break;
+            case "UL_T3_ERROR":
+            name="Uplink T3 Error";
+            break;
+            case "UL_T4_ERROR":
+            name="Uplink T4 Error";
+            break;
+            case "UL_ERROR":
+            name="Uplink Error";
+            break;
+            case "DL_ERROR":
+            name="Dowlink Error";
+            break;
+            case "CROSS_CORR":
+            name="Cross Correlation";
+            break;
+            case "SET_FORCED":
+            name="Set Forced";
+            break;
+            case "SET_INHIBITED":
+            name="Set Inhibited";
+            break;
+            case "SET_SEQUENTIAL":
+            name="Set Sequential";
+            break;
+            default:
+            name="N/A";
+        }
+        return name;
+        
+    }
+    
+         
+     //Fill Constraint Combobox by Event
+    public void FillStepsComboboxfromEvent(JComboBox combo, LinkManifest link ){
+        
+            combo.removeAllItems();
+            if (link!=null){
+                List<Step> list= link.getSteplist();
+
+                for (Step step : list ){
+                    combo.addItem(step.getName());
+                }
+
+            }
+            
+            
+        
+    }
+    
+    //Get Class Step by a textname
+    public Step GetStepByText(LinkManifest link,String steptext){
+       LinkManifest  linkManifest=link;
+       
+       if (linkManifest!=null){
+           List<Step> steplist = linkManifest.getSteplist();
+            for (Step step:steplist){
+                    if (step.getName().equals(steptext)){
+                        return step;
+                    }
+            }
+
+       }
+        return null;
+    }
+
+    
+    // Verifies if a variant can add a linkmanifest
+    public Boolean GetVariantCanLinkManifest(String variantname){
+        Boolean canbe=false;
+        switch ( variantname.trim()) {
+            case "Acquisition Link Errors":
+            canbe=true;
+            break;
+            case "Link Errors":
+            canbe=true;
+            break;
+            case "Phase 3 Link Errors":
+            canbe=true;
+            break;
+            default:
+              canbe=false;
+                    
+        }
+        return canbe;
+        
+        
+    }
+ 
+    // fills a corruption type combo box dropdown
+    public void ListCorruptionType(JComboBox combo){
+        //Add all the Corruption to the list
+        List<CorruptionType> corruptionList=new ArrayList();
+        combo.removeAllItems();
+        corruptionList.add(new CorruptionType("Uplink Xmit Error","UL_XMIT_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink GID Error","UL_GID_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink T2 Error","UL_T2_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink T3 Error","UL_T3_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink T4 Error","UL_T4_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink Error","UL_ERROR"));
+        corruptionList.add(new CorruptionType("Dowlink Error","DL_ERROR"));
+        corruptionList.add(new CorruptionType("Cross Correlation","CROSS_CORR"));
+        corruptionList.add(new CorruptionType("Set Forced","SET_FORCED"));
+        corruptionList.add(new CorruptionType("Set Inhibited","SET_INHIBITED"));
+        corruptionList.add(new CorruptionType("Set Sequential","SET_SEQUENTIAL"));
+
+         for (CorruptionType corruptiontype : corruptionList ){
+                combo.addItem(corruptiontype.getName());
+            }
+        
+    }
+    
+    //Get corruption-type(xml) by string
+    public String getCorrruptiontypetXML(List<CorruptionType> listcorruptiontype, String corruptiontypename){
+        String xmlname="";
+        
+        List<CorruptionType> corruptionList=new ArrayList();
+        corruptionList.add(new CorruptionType("Uplink Xmit Error","UL_XMIT_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink GID Error","UL_GID_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink T2 Error","UL_T2_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink T3 Error","UL_T3_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink T4 Error","UL_T4_ERROR"));
+        corruptionList.add(new CorruptionType("Uplink Error","UL_ERROR"));
+        corruptionList.add(new CorruptionType("Dowlink Error","DL_ERROR"));
+        corruptionList.add(new CorruptionType("Cross Correlation","CROSS_CORR"));
+        corruptionList.add(new CorruptionType("Set Forced","SET_FORCED"));
+        corruptionList.add(new CorruptionType("Set Inhibited","SET_INHIBITED"));
+        corruptionList.add(new CorruptionType("Set Sequential","SET_SEQUENTIAL"));
+        
+        for(CorruptionType corruptiontype:corruptionList){
+            if (corruptiontype.getName().equals(corruptiontypename)){
+                xmlname=corruptiontype.getXmlname();
+            }
+        }
+        
+        return xmlname;
+    }
+    
+    //Get Class Contraint by textname
+    public Constrains getConstrainByname(List<Constrains> listaconstraints, String constraintname){
+        String xmlname="";
+        for(Constrains constraint:listaconstraints){
+            if (constraint.getName().equals(constraintname)){
+                return constraint;
+            }
+        }
+        
+        return null;
+    }
+    
+    //Remove a CorruptionType from a Step
+    public void RemoveCorruptionTypeFromStep(Step step,String corruptionname){
+        
+        List<CorruptionType> listcorruption=  step.getCorruptiontypelist();
+        CorruptionType corruption=null;
+        for (CorruptionType corrup:listcorruption){
+            if (corrup.getName().equals(corruptionname)){
+                corruption=corrup;
+            }
+        }
+        
+        if(corruption!=null){
+            listcorruption.remove(corruption);
+        }
         
     }
     
