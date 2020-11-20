@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<test>
+  <event>
+    <variant>UPLINK_LATE</variant>
+    <constraint>
+      <type>acq_complete_flag</type>
+      <bounds>CONSTRAINT_BOUND_DISABLED</bounds>
+      <value>1.0</value>
+    </constraint>
+  </event>
+</test>
