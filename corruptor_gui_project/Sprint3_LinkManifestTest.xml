@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <test>
   <event>
+    <variant>NO_ERRORS</variant>
+    <constraint>
+      <type>acq_complete_flag</type>
+      <bounds>CONSTRAINT_BOUND_GREATER_OR_EQUAL</bounds>
+      <value>1.0</value>
+    </constraint>
+  </event>
+  <event>
     <variant>LINK_ERRORS</variant>
     <constraint>
       <type>link_event_done</type>
@@ -34,13 +42,5 @@
         <corruption_type>UL_XMIT_ERROR</corruption_type>
       </step>
     </link_manifest>
-  </event>
-  <event>
-    <variant>NO_ERRORS</variant>
-    <constraint>
-      <type>acq_complete_flag</type>
-      <bounds>CONSTRAINT_BOUND_GREATER_OR_EQUAL</bounds>
-      <value>1.0</value>
-    </constraint>
   </event>
 </test>

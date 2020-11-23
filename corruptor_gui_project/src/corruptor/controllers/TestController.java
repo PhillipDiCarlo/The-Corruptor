@@ -818,6 +818,18 @@ public class TestController {
             case "Phase 3 Link Errors":
             canbe=true;
             break;
+            case "Acquisition Subpulse Errors":
+            canbe=true;
+            break;
+            case "Exit After Zone":
+            canbe=true;
+            break;
+            case "Exit On Reaquisition":
+            canbe=true;
+            break;
+            case "Exit On Transition":
+            canbe=true;
+            break;
             default:
               canbe=false;
                     
