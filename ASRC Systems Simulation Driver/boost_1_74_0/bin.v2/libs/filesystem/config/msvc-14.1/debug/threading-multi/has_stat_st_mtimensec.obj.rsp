@@ -1,0 +1,3 @@
+"libs\filesystem\config\has_stat_st_mtimensec.cpp" -Fo"bin.v2\libs\filesystem\config\msvc-14.1\debug\threading-multi\has_stat_st_mtimensec.obj"    -TP /Z7 /Od /Ob0 /W3 /GR /MDd /Zc:forScope /Zc:wchar_t /Zc:inline /Zc:throwingNew /wd4675 /EHs -c 
+-DBOOST_ALL_NO_LIB=1 
+"-I."
