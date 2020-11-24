@@ -12,6 +12,7 @@ public class Events {
     private String name;
     private Variants  variant;
     private List<Constrains> constraintlist;
+    private LinkManifest linkmanigest;
 
     /**
      * @return the name
@@ -53,6 +54,20 @@ public class Events {
      */
     public void setConstraintlist(List<Constrains> constraintlist) {
         this.constraintlist = constraintlist;
+    }
+
+    /**
+     * @return the linkmanigest
+     */
+    public LinkManifest getLinkmanigest() {
+        return linkmanigest;
+    }
+
+    /**
+     * @param linkmanigest the linkmanigest to set
+     */
+    public void setLinkmanigest(LinkManifest linkmanigest) {
+        this.linkmanigest = linkmanigest;
     }
     
     

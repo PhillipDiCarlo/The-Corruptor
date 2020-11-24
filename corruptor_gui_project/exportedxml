@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<test>
+  <event>
+    <variant>ACQ_LINK_ERRORS</variant>
+    <constraint>
+      <type>link_sequence_done</type>
+      <bounds>CONSTRAINT_BOUND_LESSER_OR_EQUAL</bounds>
+      <value>1.0</value>
+    </constraint>
+    <constraint>
+      <type>time_until_intercept</type>
+      <bounds>CONSTRAINT_BOUND_LESSER_OR_EQUAL</bounds>
+      <value>1.0</value>
+    </constraint>
+    <constraint>
+      <type>endless_event_flag</type>
+      <bounds>CONSTRAINT_BOUND_GREATER</bounds>
+      <value>2.0</value>
+    </constraint>
+  </event>
+  <event>
+    <variant> NO_ERRORS </variant>
+    <constraint>
+      <type> dwell_cnt </type>
+      <bounds> CONSTRAINT_BOUND_GREATER </bounds>
+      <value>2.0</value>
+    </constraint>
+    <constraint>
+      <type> acq_complete_flag </type>
+      <bounds> CONSTRAINT_BOUND_GREATER_OR_EQUAL </bounds>
+      <value>1.0</value>
+    </constraint>
+  </event>
+</test>

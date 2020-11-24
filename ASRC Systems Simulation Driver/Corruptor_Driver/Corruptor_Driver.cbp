@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Corruptor_Driver" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Corruptor_Driver" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Weffc++" />
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add directory="../../Downloads/boost_1_74_0" />
+				</Compiler>
+				<Linker>
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_filesystem-vc141-mt-gd-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_filesystem-vc141-mt-gd-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_filesystem-vc141-mt-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_filesystem-vc141-mt-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_program_options-vc141-mt-gd-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_program_options-vc141-mt-gd-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_program_options-vc141-mt-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_program_options-vc141-mt-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_regex-vc141-mt-gd-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_regex-vc141-mt-gd-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_regex-vc141-mt-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_regex-vc141-mt-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_system-vc141-mt-gd-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_system-vc141-mt-gd-x64-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_system-vc141-mt-x32-1_74.lib" />
+					<Add library="../../Downloads/boost_1_74_0/stage/lib/boost_system-vc141-mt-x64-1_74.lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Corruptor_Driver" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="Every_Link_Manifest_Capable_Variant_EventTree.xml" />
+		<Unit filename="Every_Link_Manifest_Condition_Variant.xml" />
+		<Unit filename="Sprint3_LinkManifestTest.xml" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

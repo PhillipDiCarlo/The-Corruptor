@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<test>
+  <event>
+    <variant>PHASE_TRANSITION_UPLINK_ERRORS</variant>
+    <constraint>
+      <type>link_event_done</type>
+      <bounds>CONSTRAINT_BOUND_LESSER</bounds>
+      <value>4.0</value>
+    </constraint>
+  </event>
+  <event>
+    <variant> NO_ERRORS </variant>
+    <constraint>
+      <type> dwell_cnt </type>
+      <bounds> CONSTRAINT_BOUND_GREATER </bounds>
+      <value>2.0</value>
+    </constraint>
+    <constraint>
+      <type> acq_complete_flag </type>
+      <bounds> CONSTRAINT_BOUND_GREATER_OR_EQUAL </bounds>
+      <value>1.0</value>
+    </constraint>
+  </event>
+  <event>
+    <variant>UPLINK_LOST</variant>
+    <constraint>
+      <type>link_event_done</type>
+      <bounds>CONSTRAINT_BOUND_LESSER</bounds>
+      <value>6.0</value>
+    </constraint>
+  </event>
+</test>
