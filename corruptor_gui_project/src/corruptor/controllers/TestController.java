@@ -809,9 +809,6 @@ public class TestController {
     public Boolean GetVariantCanLinkManifest(String variantname){
         Boolean canbe=false;
         switch ( variantname.trim()) {
-            case "Acquisition Link Errors":
-            canbe=true;
-            break;
             case "Link Errors":
             canbe=true;
             break;
